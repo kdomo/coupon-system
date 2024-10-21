@@ -29,4 +29,27 @@ class ApplyServiceTest {
 
         assertThat(count).isEqualTo(1);
     }
+
+    @Test
+    void 여러번_응모() throws InterruptedException {
+        int threadCount = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            long userId = i;
+            executorService.submit(() -> {
+                try{
+                    applyService.apply(userId);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        long count = couponRepository.count();
+        assertThat(count).isEqualTo(100);
+    }
 }
