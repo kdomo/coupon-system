@@ -1,6 +1,7 @@
 package com.devdomo.couponsystem.service;
 
 import com.devdomo.couponsystem.domain.Coupon;
+import com.devdomo.couponsystem.producer.CouponCreateProducer;
 import com.devdomo.couponsystem.repository.CouponCountRepository;
 import com.devdomo.couponsystem.repository.CouponRepository;
 import org.springframework.stereotype.Service;
@@ -9,10 +10,12 @@ import org.springframework.stereotype.Service;
 public class ApplyService {
     private final CouponRepository couponRepository;
     private final CouponCountRepository couponCountRepository;
+    private final CouponCreateProducer couponCreateProducer;
 
-    public ApplyService(CouponRepository couponRepository, CouponCountRepository couponCountRepository) {
+    public ApplyService(CouponRepository couponRepository, CouponCountRepository couponCountRepository, CouponCreateProducer couponCreateProducer) {
         this.couponRepository = couponRepository;
         this.couponCountRepository = couponCountRepository;
+        this.couponCreateProducer = couponCreateProducer;
     }
 
     public void apply(Long userId) {
@@ -21,6 +24,6 @@ public class ApplyService {
         if (count > 100) {
             return;
         }
-        couponRepository.save(new Coupon(userId));
+        couponCreateProducer.create(userId);
     }
 }
